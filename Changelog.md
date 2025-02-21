@@ -242,3 +242,17 @@
 - Fix save password (User) and lsRate (Tour) to Firebase
 - Check valid ticket when book tour
 - Fix book tour button on Tour Detail -> enable = false when ticket = 0
+
+## 21-1-2025
+### Added
+- user analytics
+- Divide tour list into multiple categories
+- top most booked tour on main scene
+- get tour list when choose province
+
+### Fixed
+- on cancel a booked tour -> re-increment current ticket of tour
+- list top deal tours
+- recomment tours on Search scene, Favorite scene, MyTour Scene
+- similar tour on tour detail
+- similar tour of user on logged
