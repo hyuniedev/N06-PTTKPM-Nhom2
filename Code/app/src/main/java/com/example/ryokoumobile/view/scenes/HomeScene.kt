@@ -112,7 +112,10 @@ fun HomeScene(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(
-                        UserAnalytics.lsDealTour
+                        UserAnalytics.lsDealTour.subList(
+                            0,
+                            if (UserAnalytics.lsDealTour.size < 10) UserAnalytics.lsDealTour.size else 10
+                        )
                     ) { tour ->
                         ItemTour(
                             tour,

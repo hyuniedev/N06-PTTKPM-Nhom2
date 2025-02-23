@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import com.example.ryokoumobile.model.controller.DataController
 import com.example.ryokoumobile.model.entity.TourBooked
 import com.example.ryokoumobile.model.repository.Scenes
+import com.example.ryokoumobile.tool.toolUpdateStartTimeOfTour
 import com.example.ryokoumobile.ui.theme.RyokouMobileTheme
 import com.example.ryokoumobile.view.components.MyNavigationBar
 import com.example.ryokoumobile.view.components.MyShowToast
@@ -194,6 +195,9 @@ fun BackHandleSpam() {
         if (backToOutApp.value) {
             (context as? Activity)?.finish()
         } else {
+            //----------Run tool-----------
+//            toolUpdateStartTimeOfTour()
+            //-----------------------------
             backToOutApp.value = true
             MyShowToast(context, "Press back again to exit")
             coroutineScope.launch {

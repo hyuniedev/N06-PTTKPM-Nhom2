@@ -62,7 +62,7 @@ object UserAnalytics {
     fun updateDealTours(from: Int) {
         if (from != fromHour) {
             fromHour = from
-            lsDealTour = DataController.tourVM.uiState.value.shuffled().subList(0, 10)
+            lsDealTour = DataController.tourVM.uiState.value.shuffled()
         }
     }
 

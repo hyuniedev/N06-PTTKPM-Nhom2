@@ -11,9 +11,11 @@ import com.example.ryokoumobile.model.entity.Tour
 import com.example.ryokoumobile.model.entity.TourBooked
 import com.example.ryokoumobile.model.enumClass.EVariationTicket
 import com.example.ryokoumobile.model.repository.Scenes
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.Calendar
 
 class TourViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<List<Tour>>(emptyList())
@@ -31,6 +33,15 @@ class TourViewModel : ViewModel() {
                 try {
                     for (doc in result) {
                         val tour = doc.toObject(Tour::class.java)
+                        //-------Check active tour------------
+                        val calendar = Calendar.getInstance().apply {
+                            time = tour.start.toDate()
+                            add(Calendar.DAY_OF_MONTH, tour.maintainTime)
+                        }
+                        val curTime = Timestamp.now().toDate()
+                        if (calendar.time.before(curTime) || tour.start.toDate().after(curTime))
+                            continue
+                        //------------------------------------
                         tour.id = doc.id
                         FirebaseController.firestore.collection("rates")
                             .whereEqualTo("tourId", tour.id).get()
