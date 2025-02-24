@@ -50,20 +50,46 @@ class SearchViewModel : ViewModel() {
         _uiState.update { it.copy(priceRange = priceRange, isDropPriceRange = false) }
     }
 
+    fun updateAProvince() {
+        _uiState.update { it.copy(aProvince = !it.aProvince) }
+        if (!_uiState.value.aProvince && !_uiState.value.multiProvince)
+            updateMultiProvince()
+    }
+
+    fun updateMultiProvince() {
+        _uiState.update { it.copy(multiProvince = !it.multiProvince) }
+        if (!_uiState.value.aProvince && !_uiState.value.multiProvince)
+            updateAProvince()
+    }
+
+    private fun updateShowResult() {
+        _uiState.update { it.copy(showResult = true) }
+    }
+
     fun toursFilter() {
         _uiState.update { it.copy(lsResult = listOf()) }
-        var lsTour = DataController.tourVM.uiState.value
-        var lsPrice = _uiState.value.priceRange.replace(Regex("[^0-9-]"), "").split("-")
+        val lsTour = DataController.tourVM.uiState.value
+        val lsPrice = _uiState.value.priceRange.replace(Regex("[^0-9-]"), "").split("-")
             .mapNotNull { it.toLongOrNull() }
         lsTour.forEach { tour ->
             if (checkKeyword(tour) && checkCompany(tour) && checkLocation(tour) && checkPrice(
                     tour,
                     lsPrice
-                )
+                ) && checkTypeTour(tour)
             ) {
                 _uiState.update { it.copy(lsResult = it.lsResult + tour) }
             }
         }
+        updateShowResult()
+    }
+
+    private fun checkTypeTour(tour: Tour): Boolean {
+        if (_uiState.value.aProvince && _uiState.value.multiProvince)
+            return true
+        var okCheck = true
+        if (_uiState.value.aProvince && tour.city.size > 1) okCheck = false
+        if (_uiState.value.multiProvince && tour.city.size == 1) okCheck = false
+        return okCheck
     }
 
     private fun checkPrice(tour: Tour, lsPrice: List<Long>): Boolean {

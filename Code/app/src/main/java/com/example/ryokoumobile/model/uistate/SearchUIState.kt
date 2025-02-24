@@ -13,5 +13,8 @@ data class SearchUIState(
     var isDropProvince: Boolean = false,
     var isDropPriceRange: Boolean = false,
     var lsCompany: List<Company> = listOf(),
-    var lsResult: List<Tour> = listOf()
+    var lsResult: List<Tour> = listOf(),
+    var aProvince: Boolean = true,
+    var multiProvince: Boolean = true,
+    var showResult: Boolean = false
 )

@@ -565,6 +565,11 @@ private fun OverviewSection(tour: Tour) {
             style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         )
         ARowInOverview(
+            R.drawable.list_province,
+            R.string.tinhThanhDiQua,
+            tour.city.joinToString(separator = " - ")
+        )
+        ARowInOverview(
             R.drawable.ticket,
             R.string.soVeKhaDung,
             "${tour.ticketLimit.numLimitTicket - tour.ticketLimit.numCurrentTicket} vé"

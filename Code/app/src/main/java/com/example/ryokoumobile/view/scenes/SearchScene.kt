@@ -1,5 +1,7 @@
 package com.example.ryokoumobile.view.scenes
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -82,7 +87,7 @@ private fun SearchResult(
     navController: NavController,
 ) {
     Column(modifier.padding(horizontal = 15.dp)) {
-        if (uiState.lsResult.isEmpty()) {
+        if (uiState.lsResult.isEmpty() && !uiState.showResult) {
             RecommendedTours(UserAnalytics.lsMostPopularTour, navController)
         } else {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -146,6 +151,24 @@ private fun SearchBox(
                 .clip(RoundedCornerShape(10.dp)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 15.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                IconTypeTour(
+                    "Đơn tỉnh",
+                    R.drawable.outline_tour,
+                    uiState.aProvince
+                ) { searchVM.updateAProvince() }
+                Spacer(Modifier.width(20.dp))
+                IconTypeTour(
+                    "Đa tỉnh",
+                    R.drawable.multi_province,
+                    uiState.multiProvince
+                ) { searchVM.updateMultiProvince() }
+            }
             OutlinedTextField(
                 value = uiState.searchText,
                 onValueChange = { value -> searchVM.updateSearchText(value) },
@@ -156,7 +179,7 @@ private fun SearchBox(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 15.dp)
+                    .padding(top = 10.dp)
             )
             Row(
                 modifier = Modifier
@@ -290,5 +313,41 @@ private fun SearchBox(
                 focus.clearFocus()
             }
         }
+    }
+}
+
+@Composable
+private fun IconTypeTour(
+    title: String,
+    @DrawableRes painter: Int,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .border(
+                    1.dp, MaterialTheme.colorScheme.primary,
+                    CircleShape
+                )
+                .clip(CircleShape)
+                .background(color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
+                .clickable { onClick() }
+        ) {
+            Icon(
+                painterResource(painter),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                tint = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+            )
+        }
+        Text(title, style = TextStyle(fontSize = 16.sp), maxLines = 1)
     }
 }

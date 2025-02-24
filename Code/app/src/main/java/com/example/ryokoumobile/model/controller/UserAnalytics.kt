@@ -60,7 +60,7 @@ object UserAnalytics {
 
 
     fun updateDealTours(from: Int) {
-        if (from != fromHour) {
+        if (from != fromHour || lsDealTour.isEmpty()) {
             fromHour = from
             lsDealTour = DataController.tourVM.uiState.value.shuffled()
         }
