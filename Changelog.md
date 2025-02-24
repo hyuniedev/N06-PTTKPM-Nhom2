@@ -256,3 +256,11 @@
 - recomment tours on Search scene, Favorite scene, MyTour Scene
 - similar tour on tour detail
 - similar tour of user on logged
+
+## 24-2-2025
+### Added
+- add search with type tour
+- display list province
+
+### Fixed
+- fix deal tours (update time is before get dealTours -> dealTour is null)
