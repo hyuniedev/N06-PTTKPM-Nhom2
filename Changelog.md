@@ -264,7 +264,3 @@
 
 ### Fixed
 - fix deal tours (update time is before get dealTours -> dealTour is null)
-
-## 27-2-2025
-### Added
-- Notification System
