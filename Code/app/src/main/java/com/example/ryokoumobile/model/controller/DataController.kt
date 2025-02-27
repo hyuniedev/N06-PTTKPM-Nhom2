@@ -7,6 +7,7 @@ import com.example.ryokoumobile.model.entity.Tour
 import com.example.ryokoumobile.model.entity.TourBooked
 import com.example.ryokoumobile.model.entity.User
 import com.example.ryokoumobile.model.enumClass.EVariationTicket
+import com.example.ryokoumobile.viewmodel.NotificationViewModel
 import com.example.ryokoumobile.viewmodel.TourViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.update
 object DataController {
     var user = MutableStateFlow<User?>(null)
     val tourVM = TourViewModel()
-
+    val notificationVM = NotificationViewModel()
+    
     var lsBookedTour = mutableStateListOf<TourBooked>()
 
     fun updateFavoriteTour(tour: Tour) {
