@@ -6,9 +6,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -26,6 +33,7 @@ import com.example.ryokoumobile.model.entity.TourBooked
 import com.example.ryokoumobile.model.repository.Scenes
 import com.example.ryokoumobile.tool.toolUpdateStartTimeOfTour
 import com.example.ryokoumobile.ui.theme.RyokouMobileTheme
+import com.example.ryokoumobile.view.components.MyElevatedButton
 import com.example.ryokoumobile.view.components.MyNavigationBar
 import com.example.ryokoumobile.view.components.MyShowToast
 import com.example.ryokoumobile.view.components.MyTopBar
@@ -36,6 +44,7 @@ import com.example.ryokoumobile.view.scenes.HomeScene
 import com.example.ryokoumobile.view.scenes.InfoUserScene
 import com.example.ryokoumobile.view.scenes.LoginScene
 import com.example.ryokoumobile.view.scenes.MyTourScene
+import com.example.ryokoumobile.view.scenes.NotificationScene
 import com.example.ryokoumobile.view.scenes.SearchScene
 import com.example.ryokoumobile.view.scenes.SignInScene
 import com.example.ryokoumobile.view.scenes.TourDetail
@@ -66,22 +75,26 @@ fun MainScene() {
     val navController = rememberNavController()
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
+
     val displayNavBar = when (currentRoute) {
-        Scenes.MainGroup.Home.route -> true
-        Scenes.MainGroup.Search.route -> true
-        Scenes.MainGroup.Favorite.route -> true
-        Scenes.MainGroup.MyTour.route -> true
-        Scenes.MainGroup.Account.route -> true
+        in arrayOf(
+            Scenes.MainGroup.Home.route,
+            Scenes.MainGroup.Search.route,
+            Scenes.MainGroup.Favorite.route,
+            Scenes.MainGroup.MyTour.route,
+            Scenes.MainGroup.Account.route
+        ) -> true
+
         else -> false
     }
     val displayTopBar = when (currentRoute) {
-        Scenes.TourDetail.route -> false
+        in arrayOf(Scenes.TourDetail.route, Scenes.Notification.route) -> false
         else -> true
     }
 
     BackHandleSpam()
 
-    Scaffold(topBar = { if (displayTopBar) MyTopBar() },
+    Scaffold(topBar = { if (displayTopBar) MyTopBar(onClickNotify = { navController.navigate(Scenes.Notification.route) }) },
         bottomBar = {
             if (displayNavBar) {
                 MyNavigationBar(navController)
@@ -89,7 +102,10 @@ fun MainScene() {
         })
     { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
-        NavHost(navController = navController, startDestination = Scenes.MainGroup.route) {
+        NavHost(
+            navController = navController,
+            startDestination = Scenes.MainGroup.route
+        ) {
             navigation(
                 route = Scenes.AuthGroup.route,
                 startDestination = Scenes.AuthGroup.Login.route
@@ -136,6 +152,10 @@ fun MainScene() {
                         navController
                     )
                 }
+            }
+            composable(route = Scenes.Notification.route) {
+                DataController.notificationVM.loadInitData()
+                NotificationScene(navController, DataController.notificationVM)
             }
             composable(
                 route = Scenes.TourDetail.route,
