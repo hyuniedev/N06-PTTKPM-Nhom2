@@ -1,5 +1,6 @@
 package com.example.ryokoumobile.view.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,7 +44,7 @@ import com.example.ryokoumobile.model.controller.DataController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopBar(onClickNotify: () -> Unit = {}) {
+fun MyTopBar(numUnreadNotification: Int = 0, onClickNotify: () -> Unit = {}) {
     TopAppBar(
         title = {
             if (DataController.user.collectAsState().value == null) {
@@ -75,7 +78,7 @@ fun MyTopBar(onClickNotify: () -> Unit = {}) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp)
-                            .padding(top = 5.dp)
+                            .padding(top = 5.dp, end = 10.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
@@ -93,13 +96,24 @@ fun MyTopBar(onClickNotify: () -> Unit = {}) {
                                 )
                             )
                         }
-                        IconButton(onClick = { onClickNotify() }) {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.size(35.dp)
-                            )
+                        BadgedBox(badge = {
+                            if (numUnreadNotification > 0) {
+                                Badge {
+                                    Text(
+                                        numUnreadNotification.toString(),
+                                        style = TextStyle(fontWeight = FontWeight.Bold)
+                                    )
+                                }
+                            }
+                        }) {
+                            IconButton(onClick = { onClickNotify() }) {
+                                Icon(
+                                    imageVector = Icons.Default.Notifications,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(35.dp)
+                                )
+                            }
                         }
                     }
                 }

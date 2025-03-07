@@ -176,7 +176,7 @@ private fun OnLoggedIn(myTourVM: MyTourViewModel, navController: NavController) 
 
         // Recommend Tours Section
         Box(modifier = Modifier.padding(horizontal = 10.dp)) {
-            RecommendedTours(UserAnalytics.lsSimilarTour, navController)
+            RecommendedTours(UserAnalytics.lsSimilarTour.subList(0, 10), navController)
         }
     }
     if (uiState.value.bookedTourFocus != null) {

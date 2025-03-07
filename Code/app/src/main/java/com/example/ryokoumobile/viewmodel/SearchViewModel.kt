@@ -8,11 +8,15 @@ import com.example.ryokoumobile.model.controller.FirebaseController
 import com.example.ryokoumobile.model.entity.Company
 import com.example.ryokoumobile.model.entity.Tour
 import com.example.ryokoumobile.model.uistate.SearchUIState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+import kotlin.math.roundToLong
 
 class SearchViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SearchUIState())
@@ -34,8 +38,13 @@ class SearchViewModel : ViewModel() {
         _uiState.update { it.copy(isDropCompany = value) }
     }
 
-    fun updateIsDropPriceRange(value: Boolean) {
-        _uiState.update { it.copy(isDropPriceRange = value) }
+    fun updateRangePrice(value: ClosedFloatingPointRange<Float>) {
+        _uiState.update {
+            it.copy(
+                priceRange = value.start.roundToLong().toFloat()..value.endInclusive.roundToLong()
+                    .toFloat()
+            )
+        }
     }
 
     fun updateSelectedCompany(company: Company) {
@@ -44,10 +53,6 @@ class SearchViewModel : ViewModel() {
 
     fun updateSelectedProvince(province: String) {
         _uiState.update { it.copy(selectedProvince = province, isDropProvince = false) }
-    }
-
-    fun updateSelectedPriceRange(priceRange: String) {
-        _uiState.update { it.copy(priceRange = priceRange, isDropPriceRange = false) }
     }
 
     fun updateAProvince() {
@@ -67,20 +72,19 @@ class SearchViewModel : ViewModel() {
     }
 
     fun toursFilter() {
-        _uiState.update { it.copy(lsResult = listOf()) }
-        val lsTour = DataController.tourVM.uiState.value
-        val lsPrice = _uiState.value.priceRange.replace(Regex("[^0-9-]"), "").split("-")
-            .mapNotNull { it.toLongOrNull() }
-        lsTour.forEach { tour ->
-            if (checkKeyword(tour) && checkCompany(tour) && checkLocation(tour) && checkPrice(
-                    tour,
-                    lsPrice
-                ) && checkTypeTour(tour)
-            ) {
-                _uiState.update { it.copy(lsResult = it.lsResult + tour) }
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(lsResult = listOf()) }
+            val lsTour = DataController.tourVM.uiState.value
+            lsTour.forEach { tour ->
+                if (checkKeyword(tour) && checkCompany(tour) && checkLocation(tour) && checkPrice(
+                        tour
+                    ) && checkTypeTour(tour)
+                ) {
+                    _uiState.update { it.copy(lsResult = it.lsResult + tour) }
+                }
             }
+            updateShowResult()
         }
-        updateShowResult()
     }
 
     private fun checkTypeTour(tour: Tour): Boolean {
@@ -92,15 +96,10 @@ class SearchViewModel : ViewModel() {
         return okCheck
     }
 
-    private fun checkPrice(tour: Tour, lsPrice: List<Long>): Boolean {
-        val price = _uiState.value.priceRange
-        if (price == "Tất cả") return true
-
-        if (lsPrice.size != 2) {
-            return tour.getPriceWithUnformatted() > 30000000
-        } else {
-            return lsPrice[0] <= tour.getPriceWithUnformatted() && lsPrice[1] >= tour.getPriceWithUnformatted()
-        }
+    private fun checkPrice(tour: Tour): Boolean {
+        if (uiState.value.priceRange.endInclusive == 51f) return tour.getPriceWithUnformatted() > uiState.value.priceRange.start * 1000000
+        return tour.getPriceWithUnformatted()
+            .toFloat() in uiState.value.priceRange.start * 1000000..uiState.value.priceRange.endInclusive * 1000000
     }
 
     private fun checkLocation(tour: Tour): Boolean {
@@ -115,6 +114,10 @@ class SearchViewModel : ViewModel() {
 
     private fun checkKeyword(tour: Tour): Boolean {
         return tour.name.lowercase().contains(_uiState.value.searchText.lowercase())
+    }
+
+    fun getFormatPrice(price: Long): String {
+        return if (price == 51L) "Hơn ${price - 1} triệu VNĐ" else "$price triệu VNĐ"
     }
 
     private fun loadInitCompanyList() {

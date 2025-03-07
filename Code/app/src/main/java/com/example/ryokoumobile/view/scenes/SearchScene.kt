@@ -25,10 +25,13 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -264,42 +267,36 @@ private fun SearchBox(
                     }
                 }
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(10.dp)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                RangeSlider(
+                    value = uiState.priceRange,
+                    onValueChange = { searchVM.updateRangePrice(it) },
+                    valueRange = 0f..51f,
+                    steps = 50,
+                    colors = SliderDefaults.colors(
+                        thumbColor = MaterialTheme.colorScheme.primary,
+                        activeTrackColor = MaterialTheme.colorScheme.primary,
+                        inactiveTrackColor = Color.Gray
                     )
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable { searchVM.updateIsDropPriceRange(true) },
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.price_outline),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(start = 8.dp)
                 )
-                Text(
-                    uiState.priceRange,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
-                )
-                DropdownMenu(
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .heightIn(max = 250.dp),
-                    expanded = uiState.isDropPriceRange,
-                    onDismissRequest = { searchVM.updateIsDropPriceRange(false) }) {
-                    lsPriceRange.forEach { range ->
-                        DropdownMenuItem(
-                            onClick = { searchVM.updateSelectedPriceRange(range) },
-                            text = { Text(range) })
-                    }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        searchVM.getFormatPrice(uiState.priceRange.start.toLong()),
+                        style = TextStyle(fontSize = 18.sp)
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.width(10.dp),
+                        thickness = 1.dp,
+                        color = Color.Black
+                    )
+                    Text(
+                        searchVM.getFormatPrice(uiState.priceRange.endInclusive.toLong()),
+                        style = TextStyle(fontSize = 18.sp)
+                    )
                 }
             }
             MyElevatedButton(

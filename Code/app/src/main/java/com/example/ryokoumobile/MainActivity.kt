@@ -2,6 +2,7 @@ package com.example.ryokoumobile
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -14,6 +15,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +34,8 @@ import androidx.navigation.navArgument
 import com.example.ryokoumobile.model.controller.DataController
 import com.example.ryokoumobile.model.entity.TourBooked
 import com.example.ryokoumobile.model.repository.Scenes
+import com.example.ryokoumobile.tool.TooleReadDataTour
+import com.example.ryokoumobile.tool.toolUpdateIdCompany
 import com.example.ryokoumobile.tool.toolUpdateStartTimeOfTour
 import com.example.ryokoumobile.ui.theme.RyokouMobileTheme
 import com.example.ryokoumobile.view.components.MyElevatedButton
@@ -94,7 +99,13 @@ fun MainScene() {
 
     BackHandleSpam()
 
-    Scaffold(topBar = { if (displayTopBar) MyTopBar(onClickNotify = { navController.navigate(Scenes.Notification.route) }) },
+    val notify = DataController.notificationVM.uiState.collectAsState()
+
+    Scaffold(topBar = {
+        if (displayTopBar) MyTopBar(
+            numUnreadNotification = notify.value.filter { !it.seen }.size,
+            onClickNotify = { navController.navigate(Scenes.Notification.route) })
+    },
         bottomBar = {
             if (displayNavBar) {
                 MyNavigationBar(navController)
@@ -106,6 +117,8 @@ fun MainScene() {
             navController = navController,
             startDestination = Scenes.MainGroup.route
         ) {
+            if (DataController.user.value != null)
+                DataController.notificationVM.loadInitData()
             navigation(
                 route = Scenes.AuthGroup.route,
                 startDestination = Scenes.AuthGroup.Login.route
@@ -154,7 +167,6 @@ fun MainScene() {
                 }
             }
             composable(route = Scenes.Notification.route) {
-                DataController.notificationVM.loadInitData()
                 NotificationScene(navController, DataController.notificationVM)
             }
             composable(
@@ -211,13 +223,13 @@ fun BackHandleSpam() {
     val backToOutApp = remember { MutableStateFlow(false) }
 
     val coroutineScope = rememberCoroutineScope()
+
     BackHandler {
         if (backToOutApp.value) {
             (context as? Activity)?.finish()
         } else {
-            //----------Run tool-----------
-//            toolUpdateStartTimeOfTour()
-            //-----------------------------
+//            ToolReadDataTour(context)
+//            toolUpdateIdCompany(DataController.tourVM.uiState.value)
             backToOutApp.value = true
             MyShowToast(context, "Press back again to exit")
             coroutineScope.launch {

@@ -150,6 +150,6 @@ private fun OnLoggedIn(user: User, navController: NavController) {
             }
         }
         Spacer(Modifier.height(10.dp))
-        RecommendedTours(UserAnalytics.lsSimilarTour, navController)
+        RecommendedTours(UserAnalytics.lsSimilarTour.subList(0, 10), navController)
     }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.ryokoumobile.model.controller.DataController
 import com.example.ryokoumobile.model.controller.FirebaseController
 import com.example.ryokoumobile.model.entity.Schedule
+import com.example.ryokoumobile.model.entity.Tour
 import com.example.ryokoumobile.model.entity.TourBooked
 import com.example.ryokoumobile.model.enumClass.EVariationTicket
 import com.example.ryokoumobile.model.uistate.MyTourUIState
