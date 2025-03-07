@@ -268,6 +268,7 @@
 ## 7-3-2025
 ### Added
 - change application icon
+- add report
 - reload notification when change screen
 - Auto create notification with booked tour of user
 - tool read data and add new tour to firebase
