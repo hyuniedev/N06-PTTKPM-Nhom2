@@ -142,7 +142,7 @@ class TourDetailViewModel : ViewModel() {
         val startDay = uiState.value.dateSelected?.toDate()
         val calendar = Calendar.getInstance()
         calendar.time = startDay!!
-        calendar.add(Calendar.DAY_OF_MONTH, duration)
+        calendar.add(Calendar.DAY_OF_MONTH, duration - 1)
         return Timestamp(calendar.time)
     }
 

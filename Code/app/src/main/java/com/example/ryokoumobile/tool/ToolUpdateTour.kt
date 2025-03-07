@@ -31,3 +31,11 @@ fun toolUpdateStartTimeOfTour() {
             }
         }
 }
+
+fun toolUpdateIdCompany(tours: List<Tour>) {
+    for (data in tours) {
+        data.company = "FKVpiErwHIcEIqGzpVOduNqV5HH3"
+        FirebaseController.firestore.collection("tours")
+            .document(data.id).set(data)
+    }
+}

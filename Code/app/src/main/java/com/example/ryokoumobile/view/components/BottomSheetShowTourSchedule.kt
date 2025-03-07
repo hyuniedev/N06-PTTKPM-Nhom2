@@ -120,10 +120,17 @@ fun SubModalBottomSheetShowTourSchedule(
 @Composable
 private fun LineToDo(toDo: ToDoOnDay, tour: Tour) {
     Row(modifier = Modifier.padding(bottom = 8.dp)) {
-        Text("${toDo.hour}:${toDo.minute}")
+        Text(
+            "${toDo.hour}:${toDo.minute}",
+            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.W500)
+        )
         Spacer(Modifier.width(5.dp))
         Column {
-            Text(toDo.content, maxLines = Int.MAX_VALUE)
+            Text(
+                toDo.content,
+                maxLines = Int.MAX_VALUE,
+                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.W500)
+            )
             Row {
                 Icon(
                     Icons.Default.Place,

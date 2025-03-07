@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import com.example.ryokoumobile.R
 import com.example.ryokoumobile.model.controller.DataController
 import com.example.ryokoumobile.model.controller.UserAnalytics
+import com.example.ryokoumobile.model.enumClass.EProvince
 import com.example.ryokoumobile.model.repository.Scenes
 import com.example.ryokoumobile.model.repository.lsPager
 import com.example.ryokoumobile.ui.theme.RyokouMobileTheme
@@ -104,7 +105,7 @@ fun HomeScene(
             Column(
                 modifier = Modifier
                     .padding(vertical = 10.dp)
-                    .height(380.dp),
+                    .height(330.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 FlashSaleTimeCountDown(uiState.value.duration)
@@ -126,30 +127,30 @@ fun HomeScene(
                             onClickFavorite = { DataController.updateFavoriteTour(tour) })
                     }
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clip(RoundedCornerShape(20.dp))
-                            .clickable { }) {
-                        Text(
-                            "Xem thêm",
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 21.sp,
-                                color = MaterialTheme.colorScheme.primary
-                            ),
-                            modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp)
-                        )
-                    }
-                }
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.Center
+//                ) {
+//                    Box(
+//                        modifier = Modifier
+//                            .border(
+//                                width = 1.dp,
+//                                color = MaterialTheme.colorScheme.primary,
+//                                shape = RoundedCornerShape(20.dp)
+//                            )
+//                            .clip(RoundedCornerShape(20.dp))
+//                            .clickable { }) {
+//                        Text(
+//                            "Xem thêm",
+//                            style = TextStyle(
+//                                fontWeight = FontWeight.Bold,
+//                                fontSize = 21.sp,
+//                                color = MaterialTheme.colorScheme.primary
+//                            ),
+//                            modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp)
+//                        )
+//                    }
+//                }
             }
             Spacer(Modifier.height(10.dp))
             SuggestSection(
@@ -166,6 +167,10 @@ fun HomeScene(
                     )
                 }
             )
+            LaunchedEffect(UserAnalytics.getTopProvince().size) {
+                if (UserAnalytics.getTopProvince().isNotEmpty())
+                    viewModel.updateItemSelected2(EProvince.valueOf(UserAnalytics.getTopProvince()[0].nameProvince.uppercase()))
+            }
 
             Spacer(Modifier.height(30.dp))
             Text(

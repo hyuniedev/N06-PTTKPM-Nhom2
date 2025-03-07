@@ -7,21 +7,21 @@ import kotlin.math.round
 
 data class Tour(
     var id: String = "",
-    val name: String = "",
-    val city: List<String> = listOf(),
-    val durations: Int = 0,
+    var name: String = "",
+    var city: List<String> = listOf(),
+    var durations: Int = 0,
     var start: Timestamp = Timestamp.now(),
     var maintainTime: Int = 0,
     var cost: String = "",
-    val sale: Int = 0,
-    val gatheringPlace: String = "",
-    val freeService: Boolean = false,
-    val pointo: String = "",
-    val kisoku: String = "",
-    val schedule: List<Schedule> = listOf(),
-    val lsFile: List<String> = listOf(),
+    var sale: Int = 0,
+    var gatheringPlace: String = "",
+    var freeService: Boolean = false,
+    var pointo: String = "",
+    var kisoku: String = "",
+    var schedule: List<Schedule> = listOf(),
+    var lsFile: List<String> = listOf(),
     @get:Exclude var lsRate: List<Rate> = listOf(),
-    val company: String = "",
+    var company: String = "",
     var ticketLimit: TicketLimit = TicketLimit()
 ) {
     @Exclude

@@ -29,7 +29,7 @@ data class TourBooked(
     fun getEndDay(): Date {
         val calendar = Calendar.getInstance().apply {
             time = startDay.toDate()
-            add(Calendar.DAY_OF_MONTH, DataController.tourVM.getTourFromID(tourId).durations)
+            add(Calendar.DAY_OF_MONTH, DataController.tourVM.getTourFromID(tourId).durations - 1)
         }
         return calendar.time
     }

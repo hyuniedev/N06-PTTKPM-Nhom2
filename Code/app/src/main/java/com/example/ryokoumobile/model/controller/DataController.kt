@@ -9,6 +9,7 @@ import com.example.ryokoumobile.model.entity.User
 import com.example.ryokoumobile.model.enumClass.EVariationTicket
 import com.example.ryokoumobile.viewmodel.NotificationViewModel
 import com.example.ryokoumobile.viewmodel.TourViewModel
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -16,7 +17,7 @@ object DataController {
     var user = MutableStateFlow<User?>(null)
     val tourVM = TourViewModel()
     val notificationVM = NotificationViewModel()
-    
+
     var lsBookedTour = mutableStateListOf<TourBooked>()
 
     fun updateFavoriteTour(tour: Tour) {
@@ -58,9 +59,21 @@ object DataController {
         lsBookedTour = mutableStateListOf()
 
         FirebaseController.firestore.collection("bookedTours")
-            .whereEqualTo("userId", user.value!!.id!!).get().addOnSuccessListener { datas ->
+            .whereEqualTo("userId", user.value!!.id!!).get()
+            .addOnSuccessListener { datas ->
                 for (data in datas) {
                     lsBookedTour.add(data.toObject(TourBooked::class.java))
+                }
+                //----------Tạo thông báo cho tour----------------
+                for (i in lsBookedTour.toList()) {
+                    val tourStartDate = notificationVM.revertToLocalDate(i.startDay.toDate())
+                    val tourEndDate = notificationVM.revertToLocalDate(i.getEndDay())
+                    val currentDate = notificationVM.revertToLocalDate(Timestamp.now().toDate())
+                    if (tourStartDate.year == currentDate.year && tourStartDate.monthValue == currentDate.monthValue && currentDate.dayOfMonth + 1 == tourStartDate.dayOfMonth) {
+                        notificationVM.notifyStartTour(tourVM.getTourFromID(i.tourId))
+                    } else if (tourEndDate == currentDate) {
+                        notificationVM.notifyEndTour(tourVM.getTourFromID(i.tourId))
+                    }
                 }
             }.addOnFailureListener {
                 Log.e("HyuNie", "Error on load Booked Tour: ${it.message}")
