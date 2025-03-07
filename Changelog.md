@@ -264,3 +264,21 @@
 
 ### Fixed
 - fix deal tours (update time is before get dealTours -> dealTour is null)
+
+## 7-3-2025
+### Added
+- change application icon
+- reload notification when change screen
+- Auto create notification with booked tour of user
+- tool read data and add new tour to firebase
+- tool update id of company (fix error data)
+- add BadgeBox for notification icon when have notification
+### Fixed
+- load init tour data on scope (thread)
+- Fix get end day of tour
+- on search scene: range price use RangeSlider
+- modifier text style on LineToDo
+- sort notification by timeSend
+- fix get top province is null -> exception (because generate compose is before UserAnalytics init)
+### Deleted
+- delete icon 'see more' on main scene
