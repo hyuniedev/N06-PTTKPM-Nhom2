@@ -4,7 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.ryokoumobile.model.controller.DataController
+import com.example.ryokoumobile.model.controller.ETypeNotification
 import com.example.ryokoumobile.model.controller.FirebaseController
+import com.example.ryokoumobile.model.controller.NotificationController
 import com.example.ryokoumobile.model.entity.Schedule
 import com.example.ryokoumobile.model.entity.Tour
 import com.example.ryokoumobile.model.entity.TourBooked
@@ -38,7 +40,22 @@ class MyTourViewModel : ViewModel() {
         _uiState.update { it.copy(isShowCancelTourDialog = isShow) }
     }
 
+    fun updateIsShowReportTourDialog(isShow: Boolean) {
+        _uiState.update { it.copy(isShowReportTourDialog = isShow) }
+    }
+
+    fun sendReportTour(bookedTour: TourBooked, text: String) {
+        NotificationController.SendNotification(ETypeNotification.SEND_TO_ADMIN, bookedTour, text)
+    }
+
     fun updateIsShowSupportRequestDialog(isShow: Boolean) {
+        if (isShow) {
+            NotificationController.SendNotification(
+                ETypeNotification.SEND_TO_COMPANY,
+                uiState.value.bookedTourFocus!!,
+                "Tôi cần được hỗ trợ"
+            )
+        }
         _uiState.update { it.copy(isShowSupportRequestDialog = isShow) }
     }
 
@@ -52,7 +69,7 @@ class MyTourViewModel : ViewModel() {
                 DataController.tourVM.setNumCurrentTicket(
                     DataController.tourVM.getTourFromID(
                         bookedTour.tourId
-                    ), bookedTour, EVariationTicket.DEC
+                    )!!, bookedTour, EVariationTicket.DEC
                 )
             }
             .addOnFailureListener {

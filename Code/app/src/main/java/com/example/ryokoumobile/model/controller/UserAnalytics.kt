@@ -20,7 +20,7 @@ object UserAnalytics {
         if (DataController.user.value != null) {
             for (bookedTour in DataController.lsBookedTour) {
                 val curTour = DataController.tourVM.getTourFromID(bookedTour.tourId)
-                for (city in curTour.city) {
+                for (city in curTour?.city ?: listOf()) {
                     list.addAll(DataController.tourVM.uiState.value.filter {
                         it.city.contains(city)
                     })
@@ -28,7 +28,7 @@ object UserAnalytics {
             }
             for (favoTour in DataController.user.value!!.lsFavoriteTour) {
                 val tour = DataController.tourVM.getTourFromID(favoTour)
-                for (city in tour.city) {
+                for (city in tour?.city ?: listOf()) {
                     list.addAll(DataController.tourVM.uiState.value.filter {
                         it.city.contains(city)
                     })

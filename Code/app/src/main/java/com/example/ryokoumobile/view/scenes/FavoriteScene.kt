@@ -135,10 +135,11 @@ private fun OnLoggedIn(user: User, navController: NavController) {
                 color = MaterialTheme.colorScheme.primary
             )
         )
-        if (user.lsFavoriteTour.isNotEmpty()) {
+        if (user.lsFavoriteTour.mapNotNull { DataController.tourVM.getTourFromID(it) }
+                .isNotEmpty()) {
             ShowGridTour(
                 navController = navController,
-                lsTour = user.lsFavoriteTour.map { DataController.tourVM.getTourFromID(it) })
+                lsTour = user.lsFavoriteTour.mapNotNull { DataController.tourVM.getTourFromID(it) })
         } else {
             Column(
                 modifier = Modifier

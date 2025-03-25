@@ -81,6 +81,19 @@ class NotificationViewModel : ViewModel() {
         addNewNotification(notification)
     }
 
+    fun notifyDeletedTour(id: String) {
+        FirebaseController.firestore.collection("tours")
+            .document(id).get().addOnSuccessListener { result ->
+                val tour = result.toObject(Tour::class.java)
+                var notification = Notification(
+                    fromId = "admin",
+                    toId = DataController.user.value!!.id!!,
+                    content = "Xin chào ${DataController.user.value!!.fullName}. Tour ``${tour!!.name}`` đã bị xóa. Xin lỗi vì sự bất tiện này."
+                )
+                addNewNotification(notification)
+            }
+    }
+
     private fun addNewNotification(notification: Notification) {
         FirebaseController.firestore.collection("notification")
             .whereEqualTo("content", notification.content)

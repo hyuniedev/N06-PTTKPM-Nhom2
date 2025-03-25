@@ -124,6 +124,7 @@ class SearchViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(lsCompany = it.lsCompany + Company(name = "Tất cả")) }
             FirebaseController.firestore.collection("companys")
+                .whereEqualTo("active", true)
                 .get()
                 .addOnSuccessListener { result ->
                     try {

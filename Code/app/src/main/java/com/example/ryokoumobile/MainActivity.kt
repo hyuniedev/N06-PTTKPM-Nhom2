@@ -177,6 +177,7 @@ fun MainScene() {
                     DataController.tourVM.getTourFromID(
                         backStackEntry.arguments?.getString("tourId") ?: ""
                     )
+                if (tour == null) return@composable;
                 TourDetail(tour, navController)
             }
             composable(
